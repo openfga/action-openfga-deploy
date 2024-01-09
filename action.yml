@@ -1,5 +1,5 @@
-name: 'OpenFGA Deploy Action'
-description: 'Deploy your model to a store'
+name: 'OpenFGA Model Testing Action'
+description: 'Github Action for testing your OpenFGA Authorization Model'
 
 inputs:
   api-url:
