@@ -25,25 +25,6 @@ jobs:
   test:
     name: Deploy Authorization Model
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: jaxxstorm/action-install-gh-release@v1.10.0
-        with:
-          repo: openfga/openfga
-          cache: enable
-      - name: Run a local OpenFGA Server
-        shell: bash
-        ## The key used here is for demo purpose
-        run: |
-          openfga --authn-method preshared --authn-preshared-keys key1 run&
-      - name: Create a store
-        shell: bash
-        run: | 
-          curl -X POST http://localhost:8080/stores  -H "content-type: application/json" -H "Authorization: Bearer key1" -d '{"name": "FGA Demo Store"}' > id.json
-      - name: Get store ID
-        shell: bash
-        run: |
-          echo "STORE_ID=$(jq -r '.id' id.json)" >> $GITHUB_ENV
       - name: Deploy using a file
         uses: openfga/action-openfga-deploy@v0.1
         with:
