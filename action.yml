@@ -1,7 +1,8 @@
 name: 'OpenFGA Model Deploy Action'
 description: 'Github Action for deploying your Authorization Model to an OpenFGA Store'
-icon: align-center
-color: green
+branding:
+  icon: align-center
+  color: green
 
 inputs:
   api-url:
