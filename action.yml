@@ -1,0 +1,40 @@
+name: 'OpenFGA Deploy Action'
+description: 'Deploy your model to a store'
+
+inputs:
+  api-url:
+    description: The OpenFGA server to import the Authorization Model into
+    required: true
+  api-token:
+    description: The shared secret for the server
+  store-id:
+    description: The store to import the Authorization Model into
+    required: true
+  model-file-path:
+    description: The file path of the model to be imported
+    required: false
+  model:
+    description: The model to be imported into. The characters should be escaped. The value from here will be used if model-file-path is empty
+    required: false
+  format:
+    description: The format of the Authorization Model
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Install OpenFGA CLI
+      uses: jaxxstorm/action-install-gh-release@v1.10.0
+      with:
+        repo: openfga/cli
+        cache: enable
+    - name: Deploy the file
+      if: ${{ inputs.model-file-path != '' }}
+      shell: bash
+      run: |
+        fga model write --api-url=${{ inputs.api-url }} --api-token=${{ inputs.api-token }} --store-id=${{ inputs.store-id }} --file=${{ inputs.model-file-path }}
+    - name: Deploy the command line input
+      if: ${{ inputs.model-file-path == '' }}
+      shell: bash
+      run: |
+        fga model write --api-url=${{ inputs.api-url }} --api-token=${{ inputs.api-token }} --store-id=${{ inputs.store-id }} --format=${{ inputs.format }} ${{ inputs.model }}

@@ -1,0 +1,43 @@
+name: Deploy Action
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Deploy Authorization Model
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jaxxstorm/action-install-gh-release@v1.10.0
+        with:
+          repo: openfga/openfga
+          cache: enable
+      - name: Run a local OpenFGA Server
+        shell: bash
+        ## The key used here is for demo purpose
+        run: |
+          openfga --authn-method preshared --authn-preshared-keys key1 run&
+      - name: Create a store
+        shell: bash
+        run: | 
+          curl -X POST http://localhost:8080/stores  -H "content-type: application/json" -H "Authorization: Bearer key1" -d '{"name": "FGA Demo Store"}' > id.json
+      - name: Get store ID
+        shell: bash
+        run: |
+          echo "STORE_ID=$(jq -r '.id' id.json)" >> $GITHUB_ENV
+      - name: Deploy using a file
+        uses: ./
+        with:
+          api-url: http://localhost:8080
+          api-token: key1
+          store-id: ${{ env.STORE_ID }}
+          model-file-path: ./example/model.fga
+      - name: Deploy using a string
+        uses: ./
+        with:
+          api-url: http://localhost:8080
+          api-token: key1
+          store-id: ${{ env.STORE_ID }}
+          format: json
+          model: '{\"schema_version\":\"1.1\",\"type_definitions\":\[\{\"type\":\"user\"\},\{\"type\":\"document\",\"relations\":\{\"reader\":\{\"this\":\{\}\},\"writer\":\{\"this\":\{\}\},\"owner\":\{\"this\":\{\}\}\},\"metadata\":\{\"relations\":\{\"reader\":\{\"directly_related_user_types\":\[\{\"type\":\"user\"\}\]\},\"writer\":\{\"directly_related_user_types\":\[\{\"type\":\"user\"\}\]\},\"owner\":\{\"directly_related_user_types\":\[\{\"type\":\"user\"\}\]\}\}\}\}\]\}'
