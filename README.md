@@ -29,7 +29,7 @@ jobs:
         uses: openfga/action-openfga-deploy@v0.1
         with:
           api-url: http://localhost:8080
-          api-token: key1
+          api-token: ${{ secrets.KEY }}
           store-id: ${{ env.STORE_ID }}
           model-file-path: ./example/model.fga
       - name: Deploy using a string
