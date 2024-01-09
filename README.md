@@ -36,7 +36,7 @@ jobs:
         uses: openfga/action-openfga-deploy@v0.1
         with:
           api-url: http://localhost:8080
-          api-token: key1
+          api-token: ${{ secrets.KEY }}
           store-id: ${{ env.STORE_ID }}
           format: json
           model: '{\"schema_version\":\"1.1\",\"type_definitions\":\[\{\"type\":\"user\"\},\{\"type\":\"document\",\"relations\":\{\"reader\":\{\"this\":\{\}\},\"writer\":\{\"this\":\{\}\},\"owner\":\{\"this\":\{\}\}\},\"metadata\":\{\"relations\":\{\"reader\":\{\"directly_related_user_types\":\[\{\"type\":\"user\"\}\]\},\"writer\":\{\"directly_related_user_types\":\[\{\"type\":\"user\"\}\]\},\"owner\":\{\"directly_related_user_types\":\[\{\"type\":\"user\"\}\]\}\}\}\}\]\}'
