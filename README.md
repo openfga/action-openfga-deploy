@@ -13,7 +13,7 @@ This action can be used to deploy your authorization model to an OpenFGA store.
 | `store-id` | Required | The store to which the model should be deployed     |
 | `model-file-path` | Optional | The path to your model file relative to the root of your project     |
 | `model` | Optional | The model value if file is not used, Ensure it is character escaped.     |
-| `format` | Optional | The format of the authorization model     |
+| `format` | Optional | Authorization model input format. Can be "fga" or "json"     |
 
 ## Example
 

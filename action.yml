@@ -20,7 +20,7 @@ inputs:
     description: The model to be imported into. The characters should be escaped. The value from here will be used if model-file-path is empty
     required: false
   format:
-    description: The format of the Authorization Model
+    description: Authorization model input format. Can be "fga" or "json"
     required: false
 
 runs:
