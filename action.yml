@@ -35,9 +35,13 @@ runs:
       if: ${{ inputs.model-file-path != '' }}
       shell: bash
       run: |
-        fga model write --api-url=${{ inputs.api-url }} --api-token=${{ inputs.api-token }} --store-id=${{ inputs.store-id }} --file=${{ inputs.model-file-path }}
+        fga_output=$(fga model write --api-url=${{ inputs.api-url }} --api-token=${{ inputs.api-token }} --store-id=${{ inputs.store-id }} --file=${{ inputs.model-file-path }})
+        echo $fga_output
+        echo "authorization_model_id=${{ fromJson($fga_output).authorization_model_id }}" >> "$GITHUB_OUTPUT"
     - name: Deploy the command line input
       if: ${{ inputs.model-file-path == '' }}
       shell: bash
       run: |
-        fga model write --api-url=${{ inputs.api-url }} --api-token=${{ inputs.api-token }} --store-id=${{ inputs.store-id }} --format=${{ inputs.format }} ${{ inputs.model }}
+        fga_output=$(fga model write --api-url=${{ inputs.api-url }} --api-token=${{ inputs.api-token }} --store-id=${{ inputs.store-id }} --format=${{ inputs.format }} ${{ inputs.model }})
+        echo $fga_output
+        echo "authorization_model_id=${{ fromJson($fga_output).authorization_model_id }}" >> "$GITHUB_OUTPUT"
