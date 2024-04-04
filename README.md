@@ -24,18 +24,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  deploy:
     name: Deploy Authorization Model
     runs-on: ubuntu-latest
+    steps:
       - name: Deploy using a file
-        uses: openfga/action-openfga-deploy@v0.1
+        uses: openfga/action-openfga-deploy@v0.1.0
         with:
           api-url: http://localhost:8080
           api-token: ${{ secrets.KEY }}
           store-id: ${{ env.STORE_ID }}
           model-file-path: ./example/model.fga
       - name: Deploy using a string
-        uses: openfga/action-openfga-deploy@v0.1
+        uses: openfga/action-openfga-deploy@v0.1.0
         with:
           api-url: http://localhost:8080
           api-token: ${{ secrets.KEY }}
