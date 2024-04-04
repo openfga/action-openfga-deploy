@@ -27,6 +27,7 @@ jobs:
   deploy:
     name: Deploy Authorization Model
     runs-on: ubuntu-latest
+    steps:
       - name: Deploy using a file
         uses: openfga/action-openfga-deploy@v0.1
         with:
