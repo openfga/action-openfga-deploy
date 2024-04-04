@@ -24,7 +24,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  deploy:
     name: Deploy Authorization Model
     runs-on: ubuntu-latest
       - name: Deploy using a file
