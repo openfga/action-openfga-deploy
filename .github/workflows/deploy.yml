@@ -27,13 +27,18 @@ jobs:
         run: |
           echo "STORE_ID=$(jq -r '.id' id.json)" >> $GITHUB_ENV
       - name: Deploy using a file
+        id: 'deploy-file'
         uses: ./
         with:
           api-url: http://localhost:8080
           api-token: key1
           store-id: ${{ env.STORE_ID }}
           model-file-path: ./example/model.fga
+      - name: Output the model ID
+        run: |
+          echo "The model ID is ${{ steps.deploy-file.outputs.authorization_model_id }}"
       - name: Deploy using a string
+        id: 'deploy-string'
         uses: ./
         with:
           api-url: http://localhost:8080
@@ -41,3 +46,6 @@ jobs:
           store-id: ${{ env.STORE_ID }}
           format: json
           model: '{\"schema_version\":\"1.1\",\"type_definitions\":\[\{\"type\":\"user\"\},\{\"type\":\"document\",\"relations\":\{\"reader\":\{\"this\":\{\}\},\"writer\":\{\"this\":\{\}\},\"owner\":\{\"this\":\{\}\}\},\"metadata\":\{\"relations\":\{\"reader\":\{\"directly_related_user_types\":\[\{\"type\":\"user\"\}\]\},\"writer\":\{\"directly_related_user_types\":\[\{\"type\":\"user\"\}\]\},\"owner\":\{\"directly_related_user_types\":\[\{\"type\":\"user\"\}\]\}\}\}\}\]\}'
+      - name: Output the model ID
+        run: |
+          echo "The model ID is ${{ steps.deploy-string.outputs.authorization_model_id }}"

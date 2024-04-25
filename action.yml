@@ -20,8 +20,14 @@ inputs:
     description: The model to be imported into. The characters should be escaped. The value from here will be used if model-file-path is empty
     required: false
   format:
-    description: Authorization model input format. Can be "fga" or "json", defaults to auto-detecting from the file extension 
+    description: Authorization model input format. Can be "fga" or "json", defaults to auto-detecting from the file extension
     required: false
+
+outputs:
+  authorization_model_id:
+    description: The ID of the deployed Authorization Model
+    value: ${{ steps.deploy.outputs.authorization_model_id }}
+
 
 runs:
   using: composite
@@ -31,17 +37,21 @@ runs:
       with:
         repo: openfga/cli
         cache: enable
-    - name: Deploy the file
-      if: ${{ inputs.model-file-path != '' }}
+    - name: Install JQ
+      uses: dcarbone/install-jq-action@v2
+    - name: Deploy
+      id: 'deploy'
       shell: bash
       run: |
-        fga_output=$(fga model write --api-url=${{ inputs.api-url }} --api-token=${{ inputs.api-token }} --store-id=${{ inputs.store-id }} --file=${{ inputs.model-file-path }})
-        echo $fga_output
-        echo "authorization_model_id=${{ fromJson($fga_output).authorization_model_id }}" >> "$GITHUB_OUTPUT"
-    - name: Deploy the command line input
-      if: ${{ inputs.model-file-path == '' }}
-      shell: bash
-      run: |
-        fga_output=$(fga model write --api-url=${{ inputs.api-url }} --api-token=${{ inputs.api-token }} --store-id=${{ inputs.store-id }} --format=${{ inputs.format }} ${{ inputs.model }})
-        echo $fga_output
-        echo "authorization_model_id=${{ fromJson($fga_output).authorization_model_id }}" >> "$GITHUB_OUTPUT"
+        if [ "${{ inputs.model-file-path }}" ]
+        then
+          fga_output=$(fga model write --api-url=${{ inputs.api-url }} --api-token=${{ inputs.api-token }} --store-id=${{ inputs.store-id }} --file=${{ inputs.model-file-path }})
+        else
+          fga_output=$(fga model write --api-url=${{ inputs.api-url }} --api-token=${{ inputs.api-token }} --store-id=${{ inputs.store-id }} --format=${{ inputs.format }} ${{ inputs.model }})
+        fi
+        echo "$fga_output"
+        
+        authorization_model_id=$(echo "$fga_output" | jq -r '.authorization_model_id')
+        echo "authorization_model_id=${authorization_model_id}"
+        echo "authorization_model_id=${authorization_model_id}" >> "$GITHUB_OUTPUT"
+        echo "fga_deploy_output=$fga_output" >> "$GITHUB_OUTPUT"
