@@ -6,14 +6,20 @@ This action can be used to deploy your authorization model to an OpenFGA store.
 
 ## Parameter
 
-| Parameter  | Required/Optional  | Description   |
-|----------|--------------|--------------|
-| `api-url` | Required | The URL to your OpenFGA server     |
-| `api-token` | Required | The token used to when preshared keys are used to authenticate the OpenFGA server     |
-| `store-id` | Required | The store to which the model should be deployed     |
-| `model-file-path` | Optional | The path to your model file relative to the root of your project     |
-| `model` | Optional | The model value if file is not used, Ensure it is character escaped.     |
-| `format` | Optional | Authorization model input format. Can be "fga" or "json", defaults to auto-detecting from the file extension |
+| Parameter         | Required/Optional | Description                                                                                                  |
+|-------------------|-------------------|--------------------------------------------------------------------------------------------------------------|
+| `api-url`         | Required          | The URL to your OpenFGA server                                                                               |
+| `api-token`       | Required          | The token used to when preshared keys are used to authenticate the OpenFGA server                            |
+| `store-id`        | Required          | The store to which the model should be deployed                                                              |
+| `model-file-path` | Optional          | The path to your model file relative to the root of your project                                             |
+| `model`           | Optional          | The model value if file is not used, Ensure it is character escaped.                                         |
+| `format`          | Optional          | Authorization model input format. Can be "fga" or "json", defaults to auto-detecting from the file extension |
+
+## Outputs
+
+| Output                   | Description                                |
+|--------------------------|--------------------------------------------|
+| `authorization_model_id` | The ID of the deployed Authorization Model |
 
 ## Example
 
