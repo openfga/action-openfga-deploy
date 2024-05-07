@@ -1,23 +1,39 @@
-name: 'OpenFGA Model Deploy Action'
-description: 'Github Action for deploying your Authorization Model to an OpenFGA Store'
+name: OpenFGA Model Deploy Action
+description: Github Action for deploying your Authorization Model to an OpenFGA Store
 branding:
   icon: align-center
   color: green
 
 inputs:
-  api-url:
-    description: The OpenFGA server to import the Authorization Model into
-    required: true
-  api-token:
-    description: The shared secret for the server
   store-id:
     description: The store to import the Authorization Model into
     required: true
-  model-file-path:
-    description: The file path of the model to be imported
+  api-audience:
+    description: If you use pre-shared key authentication, you can specify an API audience to use for the request
+    required: false
+  api-scopes:
+    description: If you use pre-shared key authentication, you can specify API scopes to use for the request
+    required: false
+  api-token:
+    description: The shared secret to use for the request
+    required: false
+  api-token-issuer:
+    description: If you use pre-shared key authentication, you can specify the token issuer to use for the request
+    required: false
+  api-url:
+    description: The OpenFGA server to import the Authorization Model into
+    required: true
+  client-id:
+    description: If you use pre-shared key authentication, you can specify the client ID to use for the request
+    required: false
+  client-secret:
+    description: If you use pre-shared key authentication, you can specify the client secret to use for the request
     required: false
   model:
     description: The model to be imported into. The characters should be escaped. The value from here will be used if model-file-path is empty
+    required: false
+  model-file-path:
+    description: The file path of the model to be imported
     required: false
   format:
     description: Authorization model input format. Can be "fga" or "json", defaults to auto-detecting from the file extension
@@ -28,30 +44,77 @@ outputs:
     description: The ID of the deployed Authorization Model
     value: ${{ steps.deploy.outputs.authorization_model_id }}
 
-
 runs:
   using: composite
   steps:
     - name: Install OpenFGA CLI
-      uses: jaxxstorm/action-install-gh-release@v1.10.0
+      uses: jaxxstorm/action-install-gh-release@71d17cb091aa850acb2a1a4cf87258d183eb941b
       with:
         repo: openfga/cli
         cache: enable
+
     - name: Install JQ
-      uses: dcarbone/install-jq-action@v2
-    - name: Deploy
-      id: 'deploy'
+      uses: dcarbone/install-jq-action@8867ddb4788346d7c22b72ea2e2ffe4d514c7bcb
+
+    - name: Prepare deployment
+      id: prepare
       shell: bash
       run: |
+        fga_deploy_params = "--store-id=${{ inputs.store-id }"
+
+        if [ "${{ inputs.api-audience }}" ]
+        then
+          fga_deploy_params+=" --api-audience=${{ inputs.api-audience }}"
+        fi
+
+        if [ "${{ inputs.api-scopes }}" ]
+        then
+          fga_deploy_params+=" --api-scopes=${{ inputs.api-scopes }}"
+        fi
+
+        if [ "${{ inputs.api-token }}" ]
+        then
+          fga_deploy_params+=" --api-token=${{ inputs.api-token }}"
+        fi
+
+        if [ "${{ inputs.api-token-issuer }}" ]
+        then
+          fga_deploy_params+=" --api-token-issuer=${{ inputs.api-token-issuer }}"
+        fi
+
+        if [ "${{ inputs.api-url }}" ]
+        then
+          fga_deploy_params+=" --api-url=${{ inputs.api-url }}"
+        fi
+
+        if [ "${{ inputs.client-id }}" ]
+        then
+          fga_deploy_params+=" --client-id=${{ inputs.client-id }}"
+        fi
+
+        if [ "${{ inputs.client-secret }}" ]
+        then
+          fga_deploy_params+=" --client-secret=${{ inputs.client-secret }}"
+        fi
+
         if [ "${{ inputs.model-file-path }}" ]
         then
-          fga_output=$(fga model write --api-url=${{ inputs.api-url }} --api-token=${{ inputs.api-token }} --store-id=${{ inputs.store-id }} --file=${{ inputs.model-file-path }})
+          fga_deploy_params+=" --file=${{ inputs.model-file-path }})"
         else
-          fga_output=$(fga model write --api-url=${{ inputs.api-url }} --api-token=${{ inputs.api-token }} --store-id=${{ inputs.store-id }} --format=${{ inputs.format }} ${{ inputs.model }})
+          fga_deploy_params+=" --format=${{ inputs.format }} ${{ inputs.model }})
         fi
+
+        echo "fga_deploy_params=$fga_deploy_params" >> "$GITHUB_OUTPUT"
+
+    - name: Deploy
+      id: deploy
+      shell: bash
+      run: |
+        fga_output=$(fga model write ${{ steps.prepare.outputs.fga_deploy_params }})
         echo "$fga_output"
-        
+
         authorization_model_id=$(echo "$fga_output" | jq -r '.authorization_model_id')
         echo "authorization_model_id=${authorization_model_id}"
+
         echo "authorization_model_id=${authorization_model_id}" >> "$GITHUB_OUTPUT"
         echo "fga_deploy_output=$fga_output" >> "$GITHUB_OUTPUT"
