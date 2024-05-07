@@ -60,7 +60,7 @@ runs:
       id: prepare
       shell: bash
       run: |
-        fga_deploy_params = "--store-id=${{ inputs.store-id }}"
+        fga_deploy_params="--store-id=${{ inputs.store-id }}"
 
         if [ "${{ inputs.api-audience }}" ]
         then
