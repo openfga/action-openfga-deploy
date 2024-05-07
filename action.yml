@@ -101,7 +101,12 @@ runs:
         then
           fga_deploy_params+=" --file=${{ inputs.model-file-path }}"
         else
-          fga_deploy_params+=" --format=${{ inputs.format }} ${{ inputs.model }}"
+          if [ "${{ inputs.format }}" == "json" ]
+          then
+            fga_deploy_params+=" --format=${{ inputs.format }} ${{ fromJson(inputs.model) }}"
+          else
+            fga_deploy_params+=" --format=${{ inputs.format }} ${{ inputs.model }}"
+          fi
         fi
 
         echo "fga_deploy_params=$fga_deploy_params" >> "$GITHUB_OUTPUT"
