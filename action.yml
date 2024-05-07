@@ -32,6 +32,8 @@ inputs:
   model:
     description: The model to be imported into. The characters should be escaped. The value from here will be used if model-file-path is empty
     required: false
+    type: string
+    default: ''
   model-file-path:
     description: The file path of the model to be imported
     required: false
@@ -101,11 +103,13 @@ runs:
         then
           fga_deploy_params+=" --file=${{ inputs.model-file-path }}"
         else
+          fga_deploy_params+=" --format=${{ inputs.format }}"
+
           if [ "${{ inputs.format }}" == "json" ]
           then
-            fga_deploy_params+=" --format=${{ inputs.format }} ${{ fromJson(inputs.model) }}"
+            fga_deploy_params+=' ${{ fromJson(inputs.model) }}'
           else
-            fga_deploy_params+=" --format=${{ inputs.format }} ${{ inputs.model }}"
+            fga_deploy_params+=" ${{ inputs.model }}"
           fi
         fi
 
