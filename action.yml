@@ -99,9 +99,9 @@ runs:
 
         if [ "${{ inputs.model-file-path }}" ]
         then
-          fga_deploy_params+=" --file=${{ inputs.model-file-path }})"
+          fga_deploy_params+=" --file=${{ inputs.model-file-path }}"
         else
-          fga_deploy_params+=" --format=${{ inputs.format }} ${{ inputs.model }})""
+          fga_deploy_params+=" --format=${{ inputs.format }} ${{ inputs.model }}"
         fi
 
         echo "fga_deploy_params=$fga_deploy_params" >> "$GITHUB_OUTPUT"
