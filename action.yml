@@ -107,7 +107,9 @@ runs:
 
           if [ "${{ inputs.format }}" == "json" ]
           then
-            fga_deploy_params+=' ${{ fromJson(inputs.model) }}'
+            read json <<< ${{ inputs.model }}
+            json=$( echo -n $json | jq -crRsa . )
+            fga_deploy_params+=" $json"
           else
             fga_deploy_params+=" ${{ inputs.model }}"
           fi
