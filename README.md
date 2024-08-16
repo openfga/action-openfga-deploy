@@ -34,6 +34,7 @@ jobs:
     name: Deploy Authorization Model
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Deploy using a file
         uses: openfga/action-openfga-deploy@v0.1.0
         with:
