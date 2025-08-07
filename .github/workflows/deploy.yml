@@ -1,4 +1,6 @@
 name: Deploy Action
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:
