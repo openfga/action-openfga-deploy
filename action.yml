@@ -56,7 +56,7 @@ runs:
         cache: enable
 
     - name: Install JQ
-      uses: dcarbone/install-jq-action@f0e10f46ff84f4d32178b4b76e1ef180b16f82c3
+      uses: dcarbone/install-jq-action@b7ef57d46ece78760b4019dbc4080a1ba2a40b45
 
     - name: Prepare deployment
       id: prepare
